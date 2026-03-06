@@ -5,16 +5,16 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') exit;
 
-// Credentials mula sa iyong screenshot
-$host = "interchange.proxy.rlwy.net";
-$port = "18246";
-$user = "root";
-$pass = "toPMyFDCsINduBmSBPlsyKkzBpFNOrQU";
-$dbname = "railway";
+// Gamitin ang "Public Network" details para sa external access
+$host = "interchange.proxy.rlwy.net"; // Mula sa RAILWAY_TCP_PROXY_DOMAIN
+$port = "18246";                      // Mula sa RAILWAY_TCP_PROXY_PORT
+$user = "root";                       // Mula sa MYSQLUSER
+$pass = "toPMyFDCsINduBmSBPlsyKkzBpFNOrQU"; // Mula sa MYSQL_ROOT_PASSWORD
+$dbname = "railway";                  // Mula sa MYSQL_DATABASE
 
 $conn = new mysqli($host, $user, $pass, $dbname, $port);
 
 if ($conn->connect_error) {
-    die(json_encode(["status" => "error", "message" => "Connection failed: " . $conn->connect_error]));
+    die(json_encode(["status" => "error", "message" => "Database Connection Failed"]));
 }
 ?>
