@@ -1,13 +1,24 @@
 <?php
-// Simple ID Generator: e.g., USER-65a2
-$customId = "USER-" . substr(md5(uniqid()), 0, 4);
+include 'db_connect.php';
 
-// Get JSON data
 $data = json_decode(file_get_contents("php://input"), true);
 
-// Logic to Insert into MySQL
-$sql = "INSERT INTO users (custom_id, first_name, last_name, face_descriptor) 
-        VALUES ('$customId', '{$data['fname']}', '{$data['lname']}', '{$data['descriptor']}')";
-// ... execute query ...
-echo json_encode(['id' => $customId]);
+if ($data) {
+    $fname = $conn->real_escape_string($data['fname']);
+    $lname = $conn->real_escape_string($data['lname']);
+    // Ang descriptor ay array ng numbers, i-save natin bilang JSON string
+    $descriptor = json_encode($data['descriptor']);
+    
+    // Automatic ID Generator
+    $customId = "ID-" . rand(1000, 9999);
+
+    $sql = "INSERT INTO users (custom_id, first_name, last_name, face_descriptor) 
+            VALUES ('$customId', '$fname', '$lname', '$descriptor')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo json_encode(["status" => "success", "id" => $customId]);
+    } else {
+        echo json_encode(["status" => "error", "message" => $conn->error]);
+    }
+}
 ?>
