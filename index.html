@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Face Attendance</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Attendance System</h1>
+        
+        <div class="tabs">
+            <button onclick="showSection('scan-section')">Attendance (Scan)</button>
+            <button onclick="showSection('reg-section')">New Registration</button>
+            <button onclick="showSection('search-section')">Records</button>
+        </div>
+
+        <div id="scan-section" class="content-section">
+            <div class="video-container">
+                <video id="video" width="600" height="450" autoplay muted></video>
+                <canvas id="overlay"></canvas>
+            </div>
+            <div class="controls">
+                <button class="btn-in" onclick="startAutoScan('IN')">Time In</button>
+                <button class="btn-out" onclick="startAutoScan('OUT')">Time Out</button>
+            </div>
+            <div id="scan-status">Waiting for action...</div>
+        </div>
+
+        <div id="reg-section" class="content-section" style="display:none;">
+            <h3>Register New User</h3>
+            <input type="text" id="fname" placeholder="First Name">
+            <input type="text" id="lname" placeholder="Last Name">
+            <button onclick="registerUser()">Capture & Save</button>
+            <div id="reg-status"></div>
+        </div>
+
+        <div id="search-section" class="content-section" style="display:none;">
+            <input type="text" id="searchQuery" placeholder="Search ID or Name...">
+            <button onclick="searchLogs()">Search</button>
+            <div id="results-table"></div>
+        </div>
+    </div>
+</body>
+</html>
