@@ -1,4 +1,5 @@
-const RAILWAY_API_URL = "https://attendance-production.up.railway.app"; // Palitan mo ito!
+// Update this line at the top of your script.js
+const RAILWAY_API_URL = "https://attendance-production-b630.up.railway.app";
 const video = document.getElementById('video');
 const statusBubble = document.getElementById('status-bubble');
 let labeledFaceDescriptors = [];
@@ -184,3 +185,4 @@ async function searchLogs() {
 
 // Run Initialization
 init();
+
