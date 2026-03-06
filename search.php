@@ -1,25 +1,22 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json");
-include 'db_connect.php'; // Your Railway DB connection
+include 'db_connect.php';
 
-$query = $_GET['q']; // The search input
+$q = isset($_GET['q']) ? $conn->real_escape_string($_GET['q']) : '';
 
-// Search by Name in 'users' table or ID in 'attendance'
-$sql = "SELECT users.first_name, users.last_name, attendance.user_id, attendance.type, attendance.log_time 
-        FROM attendance 
-        JOIN users ON attendance.user_id = users.custom_id 
-        WHERE users.first_name LIKE '%$query%' 
-        OR users.last_name LIKE '%$query%' 
-        OR users.custom_id = '$query'
-        ORDER BY attendance.log_time DESC";
+$sql = "SELECT u.custom_id, u.first_name, u.last_name, a.type, a.log_time 
+        FROM attendance a 
+        JOIN users u ON a.user_id = u.custom_id 
+        WHERE u.first_name LIKE '%$q%' 
+        OR u.last_name LIKE '%$q%' 
+        OR u.custom_id = '$q'
+        ORDER BY a.log_time DESC LIMIT 20";
 
 $result = $conn->query($sql);
-$rows = [];
+$data = [];
 
 while($row = $result->fetch_assoc()) {
-    $rows[] = $row;
+    $data[] = $row;
 }
 
-echo json_encode($rows);
+echo json_encode($data);
 ?>
