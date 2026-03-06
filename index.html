@@ -2,231 +2,336 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AI Face Attendance</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Face Attendance System</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script defer src="script.js"></script>
+
     <style>
         :root {
-    --primary: #4f46e5;
-    --primary-hover: #4338ca;
-    --success: #10b981;
-    --danger: #ef4444;
-    --bg-dark: #0f172a;
-    --card-bg: #ffffff;
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-}
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-slate: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', sans-serif;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
 
-body {
-    background-color: #f8fafc;
-    background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-    background-size: 20px 20px; /* Subtle grid background */
-    color: var(--text-main);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-}
+        body {
+            background-color: var(--bg-slate);
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-.container {
-    background: var(--card-bg);
-    width: 100%;
-    max-width: 800px;
-    padding: 2rem;
-    border-radius: 1.5rem;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
+        .container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 700px;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
 
-h1 {
-    text-align: center;
-    font-weight: 700;
-    font-size: 1.8rem;
-    color: var(--primary);
-    margin-bottom: 2rem;
-    letter-spacing: -0.025em;
-}
+        h1 {
+            text-align: center;
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
 
-/* Tab Navigation */
-.tabs {
-    display: flex;
-    gap: 10px;
-    background: #f1f5f9;
-    padding: 5px;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-}
+        /* --- Tab Navigation --- */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
 
-.tabs button {
-    flex: 1;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    background: transparent;
-    color: var(--text-muted);
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
+        .tabs button {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
 
-.tabs button:hover {
-    color: var(--primary);
-}
+        .tabs button.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
 
-.tabs button.active {
-    background: white;
-    color: var(--primary);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
+        /* --- Shared Camera Area --- */
+        #camera-area {
+            width: 100%;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
 
-/* Video Styling */
-.video-container {
-    position: relative;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto 1.5rem auto;
-    border-radius: 1rem;
-    overflow: hidden;
-    background: #000;
-    line-height: 0;
-    box-shadow: 0 0 0 4px #e2e8f0;
-}
+        .video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            margin: 0 auto;
+            border-radius: 1rem;
+            overflow: hidden;
+            background: #0f172a;
+            box-shadow: 0 0 0 4px #e2e8f0;
+        }
 
-#video {
-    width: 100%;
-    height: auto;
-    transform: scaleX(-1); /* Mirror effect */
-}
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* Mirror Effect */
+        }
 
-#overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
 
-/* Controls & Buttons */
-.controls {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    margin-bottom: 1rem;
-}
+        #status-bubble {
+            text-align: center;
+            background: #e0e7ff;
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 20px;
+            width: fit-content;
+            margin: 12px auto;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-button {
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.1s, opacity 0.2s;
-}
+        /* --- Content Sections --- */
+        .content-section {
+            animation: fadeIn 0.3s ease-in-out;
+        }
 
-button:active { transform: scale(0.95); }
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
 
-.btn-in { background: var(--success); color: white; width: 150px; }
-.btn-out { background: var(--danger); color: white; width: 150px; }
+        .btn-in, .btn-out, .btn-reg {
+            padding: 14px 24px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            color: white;
+            flex: 1;
+            transition: transform 0.1s, opacity 0.2s;
+        }
 
-/* Form Elements */
-input[type="text"] {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.2s;
-}
+        .btn-in { background: var(--success); }
+        .btn-out { background: var(--danger); }
+        .btn-reg { background: var(--primary); width: 100%; margin-top: 10px; }
+        
+        button:active { transform: scale(0.96); }
 
-input[type="text"]:focus {
-    border-color: var(--primary);
-    ring: 2px solid var(--primary);
-}
+        /* --- Forms --- */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-#reg-section button, .search-box button {
-    background: var(--primary);
-    color: white;
-    width: 100%;
-}
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
 
-/* Status Messages */
-#scan-status {
-    text-align: center;
-    font-weight: 500;
-    color: var(--text-muted);
-    margin-top: 10px;
-}
+        input[type="text"]:focus {
+            border-color: var(--primary);
+        }
 
-/* Records Table Styling */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1.5rem;
-}
+        /* --- Search & Tables --- */
+        .search-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+        }
 
-th {
-    text-align: left;
-    background: #f8fafc;
-    padding: 12px;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-}
+        .btn-search {
+            background: var(--primary);
+            color: white;
+            padding: 0 20px;
+            border-radius: 10px;
+        }
 
-td {
-    padding: 12px;
-    border-bottom: 1px solid #f1f5f9;
-}
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
 
-.badge-in { color: var(--success); font-weight: bold; }
-.badge-out { color: var(--danger); font-weight: bold; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            text-align: left;
+            background: #f8fafc;
+            padding: 12px;
+            color: var(--text-muted);
+            border-bottom: 2px solid #edf2f7;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+        .badge-in { background: #d1fae5; color: #065f46; }
+        .badge-out { background: #fee2e2; color: #991b1b; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 1.2rem; border-radius: 1rem; }
+            h1 { font-size: 1.3rem; }
+            .tabs button { font-size: 0.75rem; padding: 8px 4px; }
+            .controls { flex-direction: row; }
+            .btn-in, .btn-out { padding: 12px; font-size: 0.85rem; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Attendance System</h1>
-        
-        <div class="tabs">
-            <button onclick="showSection('scan-section')">Attendance (Scan)</button>
-            <button onclick="showSection('reg-section')">New Registration</button>
-            <button onclick="showSection('search-section')">Records</button>
-        </div>
 
-        <div id="scan-section" class="content-section">
-            <div class="video-container">
-                <video id="video" width="600" height="450" autoplay muted></video>
-                <canvas id="overlay"></canvas>
-            </div>
-            <div class="controls">
-                <button class="btn-in" onclick="startAutoScan('IN')">Time In</button>
-                <button class="btn-out" onclick="startAutoScan('OUT')">Time Out</button>
-            </div>
-            <div id="scan-status">Waiting for action...</div>
-        </div>
+<div class="container">
+    <h1><i class="fas fa-robot"></i> AI ATTENDANCE</h1>
+    
+    <div class="tabs">
+        <button id="tab-scan" class="active" onclick="showSection('scan-section', this)">
+            <i class="fas fa-camera"></i> Scan
+        </button>
+        <button id="tab-reg" onclick="showSection('reg-section', this)">
+            <i class="fas fa-user-plus"></i> Register
+        </button>
+        <button id="tab-search" onclick="showSection('search-section', this)">
+            <i class="fas fa-clipboard-list"></i> Records
+        </button>
+    </div>
 
-        <div id="reg-section" class="content-section" style="display:none;">
-            <h3>Register New User</h3>
-            <input type="text" id="fname" placeholder="First Name">
-            <input type="text" id="lname" placeholder="Last Name">
-            <button onclick="registerUser()">Capture & Save</button>
-            <div id="reg-status"></div>
+    <div id="camera-area">
+        <div class="video-container">
+            <video id="video" autoplay muted playsinline></video>
+            <canvas id="overlay"></canvas>
         </div>
+        <div id="status-bubble">System Initializing...</div>
+    </div>
 
-        <div id="search-section" class="content-section" style="display:none;">
-            <input type="text" id="searchQuery" placeholder="Search ID or Name...">
-            <button onclick="searchLogs()">Search</button>
-            <div id="results-table"></div>
+    <div id="scan-section" class="content-section">
+        <div class="controls">
+            <button class="btn-in" onclick="startAutoScan('IN')">
+                <i class="fas fa-sign-in-alt"></i> TIME IN
+            </button>
+            <button class="btn-out" onclick="startAutoScan('OUT')">
+                <i class="fas fa-sign-out-alt"></i> TIME OUT
+            </button>
         </div>
     </div>
+
+    <div id="reg-section" class="content-section" style="display:none;">
+        <div class="form-group">
+            <input type="text" id="fname" placeholder="First Name">
+            <input type="text" id="lname" placeholder="Last Name">
+            <button class="btn-reg" onclick="registerUser()">
+                <i class="fas fa-fingerprint"></i> CAPTURE & SAVE
+            </button>
+        </div>
+    </div>
+
+    <div id="search-section" class="content-section" style="display:none;">
+        <div class="search-box">
+            <input type="text" id="searchQuery" placeholder="Search Name or ID...">
+            <button class="btn-search" onclick="searchLogs()">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        <div id="results-table" class="table-responsive">
+            </div>
+    </div>
+</div>
+
+<script>
+    // Tab Switching Logic
+    function showSection(sectionId, btn) {
+        // Hide all
+        document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
+        document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+        
+        // Show target
+        document.getElementById(sectionId).style.display = 'block';
+        btn.classList.add('active');
+
+        // Hide camera only on Records tab
+        const cameraArea = document.getElementById('camera-area');
+        if (sectionId === 'search-section') {
+            cameraArea.style.opacity = '0';
+            setTimeout(() => cameraArea.style.display = 'none', 300);
+        } else {
+            cameraArea.style.display = 'block';
+            setTimeout(() => cameraArea.style.opacity = '1', 10);
+        }
+    }
+</script>
+
 </body>
 </html>
