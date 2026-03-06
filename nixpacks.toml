@@ -1,5 +1,6 @@
 [phases.setup]
-nixPkgs = ['php82', 'php82Extensions.mysqli', 'php82Extensions.pdo_mysql']
+nixPkgs = ['php82', 'php82Extensions.mysqli']
 
 [start]
+# This tells PHP to use the port Railway assigns (8080)
 cmd = 'php -S 0.0.0.0:$PORT'
